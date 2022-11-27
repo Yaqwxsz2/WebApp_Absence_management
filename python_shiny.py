@@ -1,3 +1,4 @@
+
 from shiny import *
 from shiny.ui import tags, h2
 import numpy as np 
@@ -6,14 +7,18 @@ import pathlib
 import palmerpenguins
 import pandas as pd
 import re
+import sqlite3
 
-penguins = palmerpenguins.load_penguins() #changer avec la base de données SQL
+con = sqlite3.connect('C:/Users/WilliamNOBLET/Downloads/BD.db')
 
-numerix_cols = [
-    "bill_length_mm",
-    "bill_depth_mm",
-    "flipper_length_mm",
-    "body_mass_g",]
+df_admin = pd.read_sql_query('SELECT * FROM Administrateur', con)
+
+df_prof = pd.read_sql_query('SELECT * FROM Professeur', con)
+
+df_etu = pd.read_sql_query('SELECT * FROM Etudiant', con)
+
+df_classe = pd.read_sql_query('SELECT * FROM SalleDeClasse', con)
+
 
 
 app_ui = ui.page_fluid(
@@ -26,7 +31,7 @@ app_ui = ui.page_fluid(
     ui.input_password('x', 'Matricule', placeholder='Entrer le matricule'),
         ),
                 
-                ui.nav("Professeur", h2("Partie des professeurs"),
+                ui.nav("Professeur", h2("Classes"),
     ui.output_table('result'),
     ui.input_action_button('add', 'Créer une classe'),
     ui.input_action_button('delete', 'Supprimer la dernière classe créée')
@@ -37,8 +42,7 @@ app_ui = ui.page_fluid(
                 ui.output_text('nom'),
                 ui.output_text('prenom'),
                 ui.output_text('datenaissance'),
-                ui.output_text('mail'),
-                ui.output_text('ntel')
+                ui.output_text('mail')
                 ),
                 id="inTabset",
             ),
@@ -49,51 +53,87 @@ app_ui = ui.page_fluid(
 )
 
 def server(input, output, session):
+
+    nom_classe = df_classe.Nom.unique()
+
+
     @output
     #Ajouter 
     
     @render.table
     def result():
-        if re.match(r'^ad', input.y()):
-            return penguins[(penguins['species'] == 'Adelie')] #utiliser start with
-        elif re.match(r'^az', input.y()):
-            return penguins[(penguins['species'] != 'Adelie')] 
-        else :
-            return penguins
+        if re.match(r'^ADM', input.y()):
+            if df_admin.index(input.x()) == df_admin.index(input.y()):
+                pp = df_admin[df_admin['Matricule'] == input.x()]
+                for i in range(len(nom_classe)):
+                    classe = df_classe[df_classe['Nom'] == nom_classe[i]]
+                    classe_etu = classe[['Matricule_etudiant']]
+                    classe_prof = classe[['Matricule_prof']]
+                    return df_etu[df_etu['Matricule_etudiant'] == classe_etu['Matricule_etudiant']], df_prof[df_prof['Matricule_prof'] == classe_prof['Matricule_prof']]
 
 
+
+        elif re.match(r'^PRF', input.y()):
+            if df_prof.index(input.x()) == df_prof.index(input.y()):
+                pp = df_prof[df_prof['Matricule'] == input.x()]
+                classe_prof = df_classe[df_classe['Matricule_prof'] == input.x()]
+                classe_prof = classe_prof[['Matricule_s']]
+
+
+                for i in range(len(nom_classe))
+
+                
+
+
+
+        elif re.match(r'^ETU', input.y()):
+            if df_etu.index(input.x()) == df_etu.index(input.y()):
+                pp = df_etu[df_etu['Matricule'] == input.x()]
+                return df_etu
+        else:
+            return('Error')
+        
             
-    pp = penguins[(penguins['species'] == input.y())]
+    @reactive.Effect 
+    @reactive.event(input.add())
+    def _():
+        nom_classe = input("Nom de la classe:")
+        matricule_professeur = input('Matricule du professeur:')
+        matricule_eleve = input('Matricule de élève:')
+        req = '''INSERT INTO SalleDeClasse (Nom, Matricule_prof, Matricule_etudiant)  
+            VALUES ({}, {}, {})'''.format(nom_classe, matricule_professeur, matricule_eleve)
+
+        con.execute(req)
+
+  
+    @reactive.Effect
+    @reactive.event(input.delete())
+    def _():
+        nom_classe_d = input('Nom de la classe a supprimer:')
+        req_delete = '''DELETE from SalleDeClasse where Nom = {};'''.format(nom_classe_d)
+        con.execute(req_delete)
 
     @output
     @render.text
     def nom():
-        return f"Nom : {pp[penguins['Nom']]}"
+        return f"Nom :{pp['Nom']}"
 
     @output
     @render.text
     def prenom():
-        return f"Prénom : {pp[penguins['Prenom']]}"
+        return f"Prénom :{pp['Prenom']}"
 
     @output
     @render.text
     def datenaissance():
-        return f"Date de naissance : {pp[penguins['Date_de_naissance']]}"
-
-    @output
-    @render.text
-    def datenaissance():
-        return f"Lieu de naissance : {pp[penguins['Lieu_de_naissance']]}"
+        return f"Lieu de naissance :{pp['Date_de_naissance']}"
 
     @output
     @render.text
     def mail():
-        return f"Adresse mail : {pp[penguins['Email']]}"
+        return f"Adresse mail :{pp['email']}"
 
-    @output
-    @render.text
-    def ntel():
-        return  f"Numéro de téléphone : {pp[penguins['Prenom']]}"
+   
 
 
 app = App(app_ui, server)
