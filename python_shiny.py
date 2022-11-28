@@ -1,4 +1,3 @@
-
 from shiny import *
 from shiny.ui import tags, h2
 import numpy as np 
@@ -18,6 +17,73 @@ df_prof = pd.read_sql_query('SELECT * FROM Professeur', con)
 df_etu = pd.read_sql_query('SELECT * FROM Etudiant', con)
 
 df_classe = pd.read_sql_query('SELECT * FROM SalleDeClasse', con)
+
+#Administrateur
+class administrateur :
+  def __init__(self, matricule, nom, prenom, date_de_naissance, lieu_de_naissance, email, mot_de_passe):
+    self.__matricule = matricule
+    self.__nom = nom
+    self.__prenom = prenom
+    self.__date_de_naissance = date_de_naissance
+    self.__lieu_de_naissance = lieu_de_naissance
+    self.__email = email
+    self.__mot_de_passe = mot_de_passe
+
+  def ajouter_classe (self, nom):
+    self.nom = input('Entrer le nom de la classe')
+  
+  def ajouter_eleve (self, mat_prof):
+    self.mat_prof = input('Entrer le matricule de élève')
+
+  def ajouter_prof (self, mat_etu):
+    self.mat_etu = input('Entrer le amtricule du professeur')
+
+ 
+
+#Professeur
+class professeur :
+  def __init__(self, matricule_prof, nom, prenom, date_de_naissance, lieu_de_naissance, email, tel):
+    self.__matricule_prof = matricule_prof
+    self.__nom = nom
+    self.__prenom = prenom
+    self.__date_de_naissance = date_de_naissance
+    self.__lieu_de_naissance = lieu_de_naissance
+    self.__email = email 
+    self.__tel = tel
+
+  def change_values (self, tel, mail):
+    self.tel = int(input('Veuillez entrer votre nouveau numéro de téléphone'))
+    self.mail = input('Veuillez entrer votre nouvel e-mail')
+
+#Étudiant
+class etudiant:
+  def __init__(self, matricule_etudiant, nom, prenom, date_de_naissance, lieu_de_naissance, email, tel, nombre_cours_assigne):
+    self.__matricule_etudiant = matricule_etudiant
+    self.__nom = nom
+    self.__prenom = prenom
+    self.__date_de_naissance = date_de_naissance
+    self.__lieu_de_naissance = lieu_de_naissance
+    self.__email = email 
+    self.__nombre_cours_assigne = nombre_cours_assigne
+    self.__tel = tel
+
+  def change_values (self, tel, mail):
+    self.tel = int(input('Veuillez entrer votre nouveau numéro de téléphone'))
+    self.mail = input('Veuillez entrer votre nouvel e-mail')
+
+  def add_courses (self, x):
+    self.__nombre_cours_assigne += x
+  
+
+
+# salle de classe
+
+class salle_de_classe (professeur, etudiant):
+  def __init__(self, mat_prof, mat_etu, nom):
+    professeur.__init__(self, mat_prof)
+    etudiant.__init__(self, mat_prof)
+    self.__nom = nom 
+
 
 
 
@@ -80,11 +146,6 @@ def server(input, output, session):
                 classe_prof = classe_prof[['Matricule_s']]
 
 
-                for i in range(len(nom_classe))
-
-                
-
-
 
         elif re.match(r'^ETU', input.y()):
             if df_etu.index(input.x()) == df_etu.index(input.y()):
@@ -138,61 +199,3 @@ def server(input, output, session):
 
 app = App(app_ui, server)
 
-#Administrateur
-class administrateur :
-  def __init__(self, matricule, nom, prenom, date_de_naissance, lieu_de_naissance, email, mot_de_passe):
-    self.__matricule = matricule
-    self.__nom = nom
-    self.__prenom = prenom
-    self.__date_de_naissance = date_de_naissance
-    self.__lieu_de_naissance = lieu_de_naissance
-    self.__email = email
-    self.__mot_de_passe = mot_de_passe
-
-
-#Professeur
-
-class professeur :
-  def __init__(self, matricule_prof, nom, prenom, date_de_naissance, lieu_de_naissance, email, tel):
-    self.__matricule_prof = matricule_prof
-    self.__nom = nom
-    self.__prenom = prenom
-    self.__date_de_naissance = date_de_naissance
-    self.__lieu_de_naissance = lieu_de_naissance
-    self.__email = email 
-    sel.__tel = tel
-
-  def change_values (self, tel, mail)
-    self.tel = int(input(“Veuillez entrer votre nouveau numéro de téléphone”))
-    self.mail = input(“Veuillez entrer votre nouvel e-mail”)
-
-#Étudiant
-class etudiant:
-  def __init__(self, matricule_etudiant, nom, prenom, date_de_naissance, lieu_de_naissance, email, tel, nombre_cours_assigne):
-    self.__matricule_etudiant = matricule_etudiant
-    self.__nom = nom
-    self.__prenom = prenom
-    self.__date_de_naissance = date_de_naissance
-    self.__lieu_de_naissance = lieu_de_naissance
-    self.__email = email 
-    self.__nombre_cours_assigne = nombre_cours_assigne
-    sel.__tel = tel
-
-  def change_values (self, tel, mail):
-    self.tel = int(input(“Veuillez entrer votre nouveau numéro de téléphone”))
-    self.mail = input(“Veuillez entrer votre nouvel e-mail”)
-
-  def add_courses (self, x):
-    self.__nombre_cours_assigne += x
-  
-
-
-# salle de classe
-
-class salle_de_classe (professeur, etudiant)
-  def __init__(self, mat_prof, mat_etu, nom):
-    professeur.__init__(self, mat_prof)
-    etudiant.__init__(self, mat_prof)
-    self.__nom = nom 
-
-   
