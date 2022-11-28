@@ -137,3 +137,62 @@ def server(input, output, session):
 
 
 app = App(app_ui, server)
+
+#Administrateur
+class administrateur :
+  def __init__(self, matricule, nom, prenom, date_de_naissance, lieu_de_naissance, email, mot_de_passe):
+    self.__matricule = matricule
+    self.__nom = nom
+    self.__prenom = prenom
+    self.__date_de_naissance = date_de_naissance
+    self.__lieu_de_naissance = lieu_de_naissance
+    self.__email = email
+    self.__mot_de_passe = mot_de_passe
+
+
+#Professeur
+
+class professeur :
+  def __init__(self, matricule_prof, nom, prenom, date_de_naissance, lieu_de_naissance, email, tel):
+    self.__matricule_prof = matricule_prof
+    self.__nom = nom
+    self.__prenom = prenom
+    self.__date_de_naissance = date_de_naissance
+    self.__lieu_de_naissance = lieu_de_naissance
+    self.__email = email 
+    sel.__tel = tel
+
+  def change_values (self, tel, mail)
+    self.tel = int(input(“Veuillez entrer votre nouveau numéro de téléphone”))
+    self.mail = input(“Veuillez entrer votre nouvel e-mail”)
+
+#Étudiant
+class etudiant:
+  def __init__(self, matricule_etudiant, nom, prenom, date_de_naissance, lieu_de_naissance, email, tel, nombre_cours_assigne):
+    self.__matricule_etudiant = matricule_etudiant
+    self.__nom = nom
+    self.__prenom = prenom
+    self.__date_de_naissance = date_de_naissance
+    self.__lieu_de_naissance = lieu_de_naissance
+    self.__email = email 
+    self.__nombre_cours_assigne = nombre_cours_assigne
+    sel.__tel = tel
+
+  def change_values (self, tel, mail):
+    self.tel = int(input(“Veuillez entrer votre nouveau numéro de téléphone”))
+    self.mail = input(“Veuillez entrer votre nouvel e-mail”)
+
+  def add_courses (self, x):
+    self.__nombre_cours_assigne += x
+  
+
+
+# salle de classe
+
+class salle_de_classe (professeur, etudiant)
+  def __init__(self, mat_prof, mat_etu, nom):
+    professeur.__init__(self, mat_prof)
+    etudiant.__init__(self, mat_prof)
+    self.__nom = nom 
+
+   
